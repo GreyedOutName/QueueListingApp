@@ -1,100 +1,96 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { supabase } from '../lib/supabase';
 
 export default function SignInScreen() {
-  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState('');
 
-  const handleSignUp = () => {
-    if (!fullName || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill out all fields.');
+  const handleSignUp = async () => {
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (signUpError) {
+      Alert.alert('Error', signUpError.message);
       return;
     }
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match.');
+
+    const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      Alert.alert('Error signing in', signInError.message);
       return;
     }
-    // Need pa lagyan ng supabase integration
-    Alert.alert('Success', 'Sign Up successful!');
+
+    const user = signInData?.user;
+
+    if (user) {
+      const { error: insertError } = await supabase.from('people').insert([
+        {
+          user_id: user.id,
+          username: username,
+        },
+      ]);
+
+      if (insertError) {
+        Alert.alert('Account created, but failed to save username', insertError.message);
+      } else {
+        Alert.alert('Success', 'Account and username created! Please check your email to confirm your account.');
+      }
+    } else {
+      Alert.alert('Account created', 'Please check your email to confirm your account.');
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sign Up</Text>
-
       <TextInput
+        placeholder="Username"
+        onChangeText={setUsername}
+        value={username}
         style={styles.input}
-        placeholder="Full Name"
-        value={fullName}
-        onChangeText={setFullName}
+        autoCapitalize="none"
       />
-
       <TextInput
-        style={styles.input}
         placeholder="Email"
+        onChangeText={setEmail}
+        value={email}
+        style={styles.input}
         keyboardType="email-address"
         autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
       />
-
       <TextInput
-        style={styles.input}
         placeholder="Password"
         secureTextEntry
-        value={password}
         onChangeText={setPassword}
-      />
-
-      <TextInput
+        value={password}
         style={styles.input}
-        placeholder="Confirm Password"
-        secureTextEntry
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
+        autoCapitalize="none"
       />
-
-      <Pressable style={styles.button} onPress={handleSignUp}>
-        <Text style={styles.buttonText}>Sign Up</Text>
-      </Pressable>
+      <Button title="Sign Up" onPress={handleSignUp} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
+    flex: 1,
     justifyContent: 'center',
     backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 24,
-    textAlign: 'center',
-  },
   input: {
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    padding: 12,
+    borderRadius: 6,
     fontSize: 16,
-    marginBottom: 16,
-  },
-  button: {
-    backgroundColor: '#3b82f6',
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 18,
   },
 });
