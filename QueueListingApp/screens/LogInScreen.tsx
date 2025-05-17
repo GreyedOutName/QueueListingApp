@@ -1,79 +1,80 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { supabase } from '../lib/supabase';
 
 export default function LogInScreen() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogIn = () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please fill out both email and password.');
-      return;
-    }
-    // Need pa lagyan ng supabase integration
-    Alert.alert('Success', 'Log In successful!');
-  };
+  const handleLogin = async () => {
+  const { data: person, error: personError } = await supabase
+    .from('people')
+    .select('user_id')
+    .eq('username', username)
+    .single();
+
+  if (personError || !person || !person.user_id) {
+    Alert.alert('Login Failed', 'Username not found');
+    return;
+  }
+
+  const { data: user, error: userError } = await supabase
+    .rpc('get_user_email', { uid: person.user_id });
+
+  if (userError || !user || !user.email) {
+    Alert.alert('Login Failed', 'User email not found');
+    return;
+  }
+
+  const email = user.email;
+
+  const { error: loginError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (loginError) {
+    Alert.alert('Login Failed', loginError.message);
+  } else {
+    Alert.alert('Success', 'Logged in successfully!');
+    // Navigate to your app's home screen here
+  }
+};
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Log In</Text>
-
       <TextInput
+        placeholder="Username"
+        onChangeText={setUsername}
+        value={username}
         style={styles.input}
-        placeholder="Email"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
+
       />
-
       <TextInput
-        style={styles.input}
         placeholder="Password"
         secureTextEntry
-        value={password}
         onChangeText={setPassword}
+        value={password}
+        style={styles.input}
       />
-
-      <Pressable style={styles.button} onPress={handleLogIn}>
-        <Text style={styles.buttonText}>Log In</Text>
-      </Pressable>
+      <Button title="Log In" onPress={handleLogin} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
+    flex: 1,
     justifyContent: 'center',
     backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 24,
-    textAlign: 'center',
-  },
   input: {
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    padding: 12,
+    borderRadius: 6,
     fontSize: 16,
-    marginBottom: 16,
-  },
-  button: {
-    backgroundColor: '#3b82f6',
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 18,
   },
 });
