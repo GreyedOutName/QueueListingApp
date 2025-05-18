@@ -1,12 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-
-type RootStackParamList = {
-  SignIn: undefined;
-  LogIn: undefined;
-  // Add other screens here if needed
-};
+import { RootStackParamList } from '../App';
 
 export default function WelcomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -29,7 +24,7 @@ export default function WelcomeScreen() {
       <Text style={styles.title}>QueueLit</Text>
 
       <Pressable style={styles.button} onPress={handleSignIn}>
-        <Text style={styles.buttonText}>Sign In</Text>
+        <Text style={styles.buttonText}>Sign Up</Text>
       </Pressable>
 
       <Pressable style={styles.button} onPress={handleLogIn}>
