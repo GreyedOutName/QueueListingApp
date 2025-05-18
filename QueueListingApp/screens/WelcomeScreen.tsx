@@ -73,8 +73,8 @@ const styles = StyleSheet.create({
   imageBanner: {
     width: 300,
     height: 155,
-    marginTop: -80,
-    marginBottom: 70,
+    marginTop: -100,
+    marginBottom: 60,
     resizeMode: 'contain',
   },
 });

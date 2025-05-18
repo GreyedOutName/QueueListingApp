@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, Button, Alert, StyleSheet } from 'react-native';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { useNavigation,NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 import { RootStackParamList } from '../App';
 
@@ -10,32 +10,28 @@ export default function LogInScreen() {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error: loginError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
-      Alert.alert('Login Failed', error.message);
+    if (loginError) {
+      Alert.alert('Login Failed', loginError.message);
     } else {
       Alert.alert('Success', 'Logged in successfully!');
-      navigation.navigate('ModeSelect');
+      navigation.navigate('ModeSelect')
     }
-  };
+};
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome back, User!</Text>
-
       <TextInput
         placeholder="Email"
         onChangeText={setEmail}
         value={email}
         style={styles.input}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
 
+      />
       <TextInput
         placeholder="Password"
         secureTextEntry
@@ -43,11 +39,8 @@ export default function LogInScreen() {
         value={password}
         style={styles.input}
       />
-
-      <View style={styles.buttonContainer}>
-        <Button title="Log In" color="#CF5050" onPress={handleLogin} />
-      </View>
-    </View> 
+      <Button title="Log In" onPress={handleLogin} />
+    </View>
   );
 }
 
@@ -58,14 +51,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#fff',
   },
-  text: {
-    textAlign: 'center',
-    color: '#000',
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 100,
-    marginTop: -40,
-  },
   input: {
     marginBottom: 12,
     borderWidth: 1,
@@ -73,9 +58,5 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 6,
     fontSize: 16,
-  },
-  buttonContainer: {
-    borderRadius: 5,
-    overflow: 'hidden',
   },
 });
