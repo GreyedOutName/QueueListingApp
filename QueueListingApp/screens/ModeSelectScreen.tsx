@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 import { RootStackParamList } from '../App';
@@ -12,15 +12,11 @@ export default function ModeSelect() {
         const {data:getId} = await supabase.auth.getSession()
         const user_id = getId.session?.user.id
 
-        const {data:frompeople}= await supabase.from('people')
+        const {data}= await supabase.from('people')
         .select('username')
         .eq('user_id',user_id)
 
-        if(frompeople){
-            setUserName(frompeople[0].username)
-        }
-        
-        //const {data:picturedownload} = await supabase.storage.from('profilepictures').download
+        setUserName(data[0].username)
     }
 
     useEffect(()=>{
@@ -30,18 +26,13 @@ export default function ModeSelect() {
     return (
         <View style={styles.container}>
             <Text>Welcome User {username}!</Text>
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('CreateQueue')}>
+            <Pressable style={styles.button} onPress={()=>navigation.navigate('CreateQueue')}>
                 <Text style={styles.buttonText}>Create Your Queue</Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('ManageQueue')}>
-                <Text style={styles.buttonText}>Manage Existing Queues</Text>
-            </TouchableOpacity>
-
-
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('JoinQueue')}>
+            <Pressable style={styles.button}>
                 <Text style={styles.buttonText}>Join A Queue</Text>
-            </TouchableOpacity>
+            </Pressable>
         </View>
     );
 }
