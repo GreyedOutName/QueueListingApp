@@ -54,7 +54,12 @@ export default function ManageQueue() {
     }
 
     const moveQueue = async()=>{
-        Alert.alert('queue moved up')
+        const {error} = await supabase.rpc('decrement_column', {
+            target_queue: QueueID
+        });
+        if (error){
+            console.log(error)
+        }
     }
 
     const giveMessage = async()=>{

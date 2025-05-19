@@ -8,6 +8,7 @@ export default function JoinQueue() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [username,setUserName] = useState<string|null>('')
     const [image,setImage] = useState <string | null> ();
+    
 
     const getUserInfo =async()=>{
         const {data:getId} = await supabase.auth.getSession()
@@ -35,7 +36,7 @@ export default function JoinQueue() {
               <Text>Add Your User Image</Text>
             </TouchableOpacity>
             <Text>Welcome User {username}!</Text>
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('ScanScreen')}>
                 <Text style={styles.buttonText}>Scan to Join!</Text>
             </TouchableOpacity>
         </View>
