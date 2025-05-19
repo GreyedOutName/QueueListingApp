@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, TextInput, Button, Text, Image, Alert, StyleSheet } from 'react-native';
 import { supabase } from '../lib/supabase';
 
 export default function SignInScreen() {
@@ -50,6 +50,11 @@ export default function SignInScreen() {
 
   return (
     <View style={styles.container}>
+      <Image source={require('../assets/icon.png')} style={styles.icon} />
+      
+      <Text style={styles.welcometext}>Welcome to QueueLit!</Text>
+      <Text style={styles.text}>Take a step ahead create your account on Queuelit!</Text>
+
       <TextInput
         placeholder="Username"
         onChangeText={setUsername}
@@ -73,24 +78,47 @@ export default function SignInScreen() {
         style={styles.input}
         autoCapitalize="none"
       />
-      <Button title="Sign Up" onPress={handleSignUp} />
+      <Button title="Sign Up" onPress={handleSignUp} color='#4A4848' />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 50,
     flex: 1,
     justifyContent: 'center',
     backgroundColor: '#fff',
   },
+  icon:{
+    height: 100,
+    width: 100,
+    marginTop: -100,
+    marginBottom: 30,
+    alignSelf: 'center',
+    resizeMode: 'contain'
+  },
+    welcometext: {
+    fontSize: 30,
+    fontWeight: '800',
+    marginTop: 50,
+    paddingBottom: 10,
+    color: '#C83E3E',
+    textAlign: 'center',
+  },
+  text: {
+    fontSize: 22,
+    paddingBottom: 65,
+    fontWeight: '500',
+    fontFamily: 'Roboto',
+    textAlign: 'center',
+  },
   input: {
-    marginBottom: 12,
+    marginBottom: 15,
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 12,
-    borderRadius: 6,
+    borderRadius: 15,
     fontSize: 16,
   },
 });
