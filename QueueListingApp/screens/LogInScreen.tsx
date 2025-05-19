@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert, StyleSheet } from 'react-native';
-import { useNavigation,NavigationProp } from '@react-navigation/native';
+import { View, TextInput, Text, Image, Button, Alert, StyleSheet } from 'react-native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 import { RootStackParamList } from '../App';
 
@@ -25,6 +25,12 @@ export default function LogInScreen() {
 
   return (
     <View style={styles.container}>
+
+      <Image source={require('../assets/icon.png')} style={styles.icon}/>
+
+      <Text style={styles.welcometext}>Welcome back, User!</Text>
+      <Text style={styles.text}>Good to see you again! Let's start your queue by logging in!</Text>
+
       <TextInput
         placeholder="Email"
         onChangeText={setEmail}
@@ -39,7 +45,7 @@ export default function LogInScreen() {
         value={password}
         style={styles.input}
       />
-      <Button title="Log In" onPress={handleLogin} />
+      <Button title="Log In" onPress={handleLogin} color='#4A4848'/>
     </View>
   );
 }
@@ -51,6 +57,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: '#fff',
   },
+  icon:{
+    height: 120,
+    width: 120,
+    marginTop: -190,
+    marginBottom: 15,
+    alignSelf: 'center',
+    resizeMode: 'contain'
+  },
+  welcometext: {
+    fontSize: 35,
+    fontWeight: '900',
+    marginTop: 50,
+    paddingBottom: 10,
+    color: '#C83E3E',
+    textAlign: 'center',
+  },
+  text: {
+    fontSize: 25,
+    marginBottom: 50,
+    fontWeight: '500',
+    fontStyle: 'italic',
+  },
   input: {
     marginBottom: 12,
     borderWidth: 1,
@@ -58,5 +86,5 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 6,
     fontSize: 16,
-  },
+  }
 });
