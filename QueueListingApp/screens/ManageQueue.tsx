@@ -55,11 +55,12 @@ export default function ManageQueue() {
 
     const moveQueue = async()=>{
         const {error} = await supabase.rpc('decrement_column', {
-            target_queue: QueueID
+            target_queue_id: QueueID
         });
         if (error){
             console.log(error)
         }
+        getTable()
     }
 
     const giveMessage = async()=>{
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   flatList: {
-    maxHeight: '70%', // or use height: 200
+    maxHeight: '70%',
     borderWidth: 1,
     borderColor: 'gray',
   },
