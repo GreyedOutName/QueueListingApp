@@ -52,39 +52,40 @@ export default function LogInScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    padding: 50,
     flex: 1,
     justifyContent: 'center',
     backgroundColor: '#fff',
   },
   icon:{
-    height: 120,
-    width: 120,
-    marginTop: -190,
-    marginBottom: 15,
+    height: 100,
+    width: 100,
+    marginTop: -140,
+    marginBottom: 30,
     alignSelf: 'center',
     resizeMode: 'contain'
   },
   welcometext: {
-    fontSize: 35,
-    fontWeight: '900',
+    fontSize: 30,
+    fontWeight: '800',
     marginTop: 50,
     paddingBottom: 10,
     color: '#C83E3E',
     textAlign: 'center',
   },
   text: {
-    fontSize: 25,
-    marginBottom: 50,
+    fontSize: 22,
+    paddingBottom: 65,
     fontWeight: '500',
-    fontStyle: 'italic',
+    fontFamily: 'Roboto',
+    textAlign: 'center',
   },
   input: {
-    marginBottom: 12,
+    marginBottom: 15,
     borderWidth: 1,
     borderColor: '#ccc',
     padding: 12,
-    borderRadius: 6,
+    borderRadius: 15,
     fontSize: 16,
   }
 });
