@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 import { RootStackParamList } from '../App';
 
-export default function ModeSelect() {
+export default function JoinQueue() {
     const navigation = useNavigation<NavigationProp<RootStackParamList>>();
     const [username,setUserName] = useState<string|null>('')
+    const [image,setImage] = useState <string | null> ();
 
     const getUserInfo =async()=>{
         const {data:getId} = await supabase.auth.getSession()
@@ -29,18 +30,13 @@ export default function ModeSelect() {
 
     return (
         <View style={styles.container}>
+
+            <TouchableOpacity style={styles.missingImage}>
+              <Text>Add Your User Image</Text>
+            </TouchableOpacity>
             <Text>Welcome User {username}!</Text>
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('CreateQueue')}>
-                <Text style={styles.buttonText}>Create Your Queue</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('ManageQueue')}>
-                <Text style={styles.buttonText}>Manage Existing Queues</Text>
-            </TouchableOpacity>
-
-
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('JoinQueue')}>
-                <Text style={styles.buttonText}>Join A Queue</Text>
+            <TouchableOpacity style={styles.button}>
+                <Text style={styles.buttonText}>Scan to Join!</Text>
             </TouchableOpacity>
         </View>
     );
@@ -58,6 +54,15 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: 'bold',
     marginBottom: 40,
+  },
+  missingImage:{
+    borderWidth: 2,
+    borderColor: '#000',
+    width:250,
+    height:250,
+    borderRadius: 0,
+    alignItems:'center',
+    justifyContent:'center'
   },
   button: {
     backgroundColor: '#3b82f6',

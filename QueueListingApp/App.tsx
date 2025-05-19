@@ -6,6 +6,8 @@ import SignInScreen from './screens/SignInScreen';
 import LoginScreen from './screens/LogInScreen';
 import ModeSelect from './screens/ModeSelectScreen';
 import CreateQueue from './screens/CreateQueue';
+import JoinQueue from './screens/JoinQueue';
+import ManageQueue from './screens/ManageQueue';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +16,8 @@ export type RootStackParamList = {
   LogIn: undefined;
   ModeSelect: undefined;
   CreateQueue:undefined;
+  JoinQueue:undefined;
+  ManageQueue:undefined
 };
 
 export default function App() {
@@ -25,6 +29,8 @@ export default function App() {
         <Stack.Screen name="LogIn" component={LoginScreen} />
         <Stack.Screen name="ModeSelect" component={ModeSelect} />
         <Stack.Screen name="CreateQueue" component={CreateQueue} />
+        <Stack.Screen name="JoinQueue" component={JoinQueue} />
+        <Stack.Screen name="ManageQueue" component={ManageQueue} />
       </Stack.Navigator>
     </NavigationContainer>
   );
