@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, FlatList} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, FlatList, Image} from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 import { RootStackParamList } from '../App';
@@ -13,10 +13,10 @@ export default function ManageQueue() {
     const [QueueID,setQueueID] = useState<string|null>('')
     const [waitingList,setWaitingList] = useState<any[]|null>(null)
     const [showQR,setShowQR]=useState<boolean>(false);
+    const [image,setImage] = useState <string|null> ();
 
     const getInfo = async()=>{
-        const {data:getId} = await supabase.auth.getSession()
-        const user_id = getId.session?.user.id
+        const user_id = (await supabase.auth.getSession()).data.session?.user.id
 
         const {data:frompeople} = await supabase.from('people')
         .select('username')
@@ -32,6 +32,18 @@ export default function ManageQueue() {
         if(fromqueues){
             setQueueID(fromqueues[0].queue_id)
             setQueueName(fromqueues[0].queue_name)
+
+            const {data:picturedownload,error:pictureError} = await supabase.storage.from('queuepictures').download(fromqueues[0].image_uri)
+            if(picturedownload){
+                const fr = new FileReader()
+                fr.readAsDataURL(picturedownload)
+                fr.onload = () =>{
+                setImage(fr.result as string)
+              }
+            }
+            if(pictureError){
+                console.log(pictureError)
+            }
         }
     }
 
@@ -73,6 +85,9 @@ export default function ManageQueue() {
 
     return (
         <View style={styles.container}>
+            {(image&&!showQR&&!waitingList)&&
+                <Image source={{uri:image}} style={{ width: 250, height: 250, borderRadius: 75 }}/>
+            }
             <Text>Welcome User {username}!</Text>
             <Text>Queue Name: {queuename}</Text>
             {showQR&&
