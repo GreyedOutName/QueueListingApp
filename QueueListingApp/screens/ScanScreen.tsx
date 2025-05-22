@@ -1,9 +1,12 @@
 import { CameraView, CameraType, useCameraPermissions, BarcodeScanningResult} from 'expo-camera';
 import { useState, useEffect , useRef} from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { supabase } from '../lib/supabase';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../App';
 
 export default function ScanScreen() {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [hasScanned,setHasScanned]=useState<boolean>(false);
@@ -39,25 +42,38 @@ export default function ScanScreen() {
   const qrScanned=async(qr:BarcodeScanningResult)=>{
     if(!hasScanned){
         if (qr.data){
+            console.log(qr.data)
             const queue_id = qr.data;
             const user_id = (await supabase.auth.getSession()).data.session?.user.id
             const joined_at = new Date().toISOString().split('.')[0].replace('T', ' ');
 
-            const{error} = await supabase.from('queue')
-            .insert({
-                user_id:user_id,
-                queue_id:queue_id,
-                queue_num:10,
-                time_joined:joined_at,
-            })
-            if(error){
-                console.log(error)
+            //check if user has already joined a queue (including the current scanned one)
+            const{data:existingQueue}= await supabase.from('waiting').select().eq('user_id',user_id)
+            if(existingQueue){
+              Alert.alert('You are already waiting in a queue!')
+              navigation.navigate('ModeSelect')
+            }else{
+              //if user has no existing wait queue, proceed to add them to waiting table
+              const{error} = await supabase.from('waiting')
+              .insert({
+                  user_id:user_id,
+                  queue_id:queue_id,
+                  queue_num:10,
+                  time_joined:joined_at,
+              })
+              if(error){
+                  Alert.alert('Invalid QR Code')
+              }else{
+                navigation.navigate('ModeSelect')
+              }
+
+              setHasScanned(true)
+              cooldownTimeout.current = setTimeout(() => {
+                  setHasScanned(false);
+              }, 3000);
             }
 
-            setHasScanned(true)
-            cooldownTimeout.current = setTimeout(() => {
-                setHasScanned(false);
-            }, 1000);
+            
         }
     }
   }
