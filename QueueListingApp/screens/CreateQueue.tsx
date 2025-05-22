@@ -71,7 +71,7 @@ export default function CreateQueue() {
             if (pictureError){
                 console.log(pictureError)
             }
-            const databaseUri = picturedata?.fullPath!
+            const databaseUri = picturedata?.path
 
             //create row in queues table
             const { error:tableError } = await supabase
@@ -94,22 +94,22 @@ export default function CreateQueue() {
 
     useEffect(()=>{
         getUserInfo()
-    },[])
+    },[]);
 
     useEffect(() => {
-    (async () => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert(
-          'Permission Required',
-          'Please grant permission to access your media library to use this feature.',
-          [{ text: 'OK' }]
-        );
-      } else {
-        setHasGalleryPermission(true);
-      }
-    })();
-  }, []);
+        (async () => {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+            Alert.alert(
+            'Permission Required',
+            'Please grant permission to access your media library to use this feature.',
+            [{ text: 'OK' }]
+            );
+        } else {
+            setHasGalleryPermission(true);
+        }
+        })();
+    }, []);
 
     return (
         <View style={styles.container}>

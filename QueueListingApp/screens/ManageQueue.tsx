@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, FlatList} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, FlatList, Image} from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 import { RootStackParamList } from '../App';
@@ -13,10 +13,10 @@ export default function ManageQueue() {
     const [QueueID,setQueueID] = useState<string|null>('')
     const [waitingList,setWaitingList] = useState<any[]|null>(null)
     const [showQR,setShowQR]=useState<boolean>(false);
+    const [image,setImage] = useState <string|null> ();
 
     const getInfo = async()=>{
-        const {data:getId} = await supabase.auth.getSession()
-        const user_id = getId.session?.user.id
+        const user_id = (await supabase.auth.getSession()).data.session?.user.id
 
         const {data:frompeople} = await supabase.from('people')
         .select('username')
@@ -32,6 +32,18 @@ export default function ManageQueue() {
         if(fromqueues){
             setQueueID(fromqueues[0].queue_id)
             setQueueName(fromqueues[0].queue_name)
+
+            const {data:picturedownload,error:pictureError} = await supabase.storage.from('queuepictures').download(fromqueues[0].image_uri)
+            if(picturedownload){
+                const fr = new FileReader()
+                fr.readAsDataURL(picturedownload)
+                fr.onload = () =>{
+                setImage(fr.result as string)
+              }
+            }
+            if(pictureError){
+                console.log(pictureError)
+            }
         }
     }
 
@@ -54,7 +66,13 @@ export default function ManageQueue() {
     }
 
     const moveQueue = async()=>{
-        Alert.alert('queue moved up')
+        const {error} = await supabase.rpc('decrement_column', {
+            target_queue_id: QueueID
+        });
+        if (error){
+            console.log(error)
+        }
+        getTable()
     }
 
     const giveMessage = async()=>{
@@ -67,6 +85,9 @@ export default function ManageQueue() {
 
     return (
         <View style={styles.container}>
+            {(image&&!showQR&&!waitingList)&&
+                <Image source={{uri:image}} style={{ width: 250, height: 250, borderRadius: 75 }}/>
+            }
             <Text>Welcome User {username}!</Text>
             <Text>Queue Name: {queuename}</Text>
             {showQR&&
@@ -80,11 +101,20 @@ export default function ManageQueue() {
                     </TouchableOpacity>
                 </View>
             }
-            {!waitingList&&
-                <TouchableOpacity style={styles.button} onPress={()=>setShowQR(!showQR)}>
-                    <Text style={styles.buttonText}>{showQR?'Hide QR Code':'Get QR Code'}</Text>
+            {!waitingList && (
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => {
+                    if (QueueID) {
+                        navigation.navigate('GenerateQR', { queueId: QueueID });
+                    } else {
+                        Alert.alert('Queue ID not available');
+                    }
+                    }}
+                >
+                    <Text style={styles.buttonText}>Generate QR Code</Text>
                 </TouchableOpacity>
-            }
+                )}
             {!showQR&&
                 <TouchableOpacity style={styles.button} onPress={getTable}>
                     <Text style={styles.buttonText}>{waitingList?'Hide Waiting List':'Show Waiting List'}</Text>
@@ -143,7 +173,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   flatList: {
-    maxHeight: '70%', // or use height: 200
+    maxHeight: '70%',
     borderWidth: 1,
     borderColor: 'gray',
   },

@@ -26,12 +26,15 @@ export default function ModeSelect() {
     useEffect(()=>{
         getUserInfo()
     },[])
+  
+    const SignOut = () => {
+      supabase.auth.signOut()
+      navigation.navigate('Main')
+    }
 
 return (
     <View style={styles.container}>
         <Image source={require('../assets/icon.png')} style={styles.logo} />
-
-
         <Text style={styles.title}>Good day, {username}!</Text>
 
         <Pressable style={styles.button1} onPress={() => navigation.navigate('CreateQueue')}>

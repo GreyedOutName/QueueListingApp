@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
+import { supabase } from '../lib/supabase';
 
 export default function WelcomeScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -18,6 +19,20 @@ export default function WelcomeScreen() {
     console.log('Continue as Guest Pressed');
     // You can also navigate to a Home screen or set session
   };
+
+  const IsUserLoggedIn = async() =>{
+    const {data} = await supabase.auth.getSession()
+    if (data.session){
+      navigation.navigate('ModeSelect')
+    }
+    else{
+      return
+    }
+  }
+
+  useEffect(()=>{
+    IsUserLoggedIn()
+  },[])
 
   return (
     <View style={styles.container}>
