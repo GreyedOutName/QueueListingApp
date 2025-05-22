@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 import { RootStackParamList } from '../App';
@@ -26,33 +26,39 @@ export default function ModeSelect() {
     useEffect(()=>{
         getUserInfo()
     },[])
-
+  
     const SignOut = () => {
       supabase.auth.signOut()
       navigation.navigate('Main')
     }
 
-    return (
-        <View style={styles.container}>
-            <Text>Welcome User {username}!</Text>
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('CreateQueue')}>
-                <Text style={styles.buttonText}>Create Your Queue</Text>
-            </TouchableOpacity>
+return (
+    <View style={styles.container}>
+        <Image source={require('../assets/icon.png')} style={styles.logo} />
+        <Text style={styles.title}>Good day, {username}!</Text>
 
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('ManageQueue')}>
-                <Text style={styles.buttonText}>Manage Existing Queues</Text>
-            </TouchableOpacity>
+        <Pressable style={styles.button1} onPress={() => navigation.navigate('CreateQueue')}>
+            <View style={styles.buttonContent}>
+                <Image source={require('../assets/create.png')} style={styles.image} />
+                <Text style={styles.buttonText}>Create Queue</Text>
+            </View>
+        </Pressable>
 
+        <Pressable style={styles.button2} onPress={() => navigation.navigate('ManageQueue')}>
+            <View style={styles.buttonContent}>
+                <Image source={require('../assets/manage.png')} style={styles.image} />
+                <Text style={styles.buttonText}>Manage Queues</Text>
+            </View>
+        </Pressable>
 
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('JoinQueue')}>
-                <Text style={styles.buttonText}>Join A Queue</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.button} onPress={SignOut}>
-                <Text style={styles.buttonText}>Sign Out</Text>
-            </TouchableOpacity>
-        </View>
-    );
+        <Pressable style={styles.button3} onPress={() => navigation.navigate('JoinQueue')}>
+            <View style={styles.buttonContent}>
+                <Image source={require('../assets/join.png')} style={styles.image} />
+                <Text style={styles.buttonText}>Join a Queue</Text>
+            </View>
+        </Pressable>
+    </View>
+);
 }
 
 const styles = StyleSheet.create({
@@ -60,29 +66,82 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 25,
     backgroundColor: '#fff',
   },
+  logo: {
+    marginTop: -70,
+    alignSelf: 'flex-start',
+    resizeMode: 'contain',
+    width: 60,
+    height: 60,
+    marginBottom: 90,
+  },
+  buttonContent: {
+    flexDirection: 'row', 
+    alignItems: 'center', 
+  },
+  image: {
+    resizeMode: 'contain',
+    width: 100,
+    height: 130,
+  },
   title: {
-    fontSize: 26,
+    marginTop: -25,
+    fontSize: 25,
     fontWeight: 'bold',
-    marginBottom: 40,
+    marginBottom: 25,
   },
-  button: {
-    backgroundColor: '#3b82f6',
+  button1: {
+    backgroundColor: '#D46666',
     paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 8,
+    paddingHorizontal: 17,
+    borderRadius: 25,
     marginVertical: 10,
-    width: '80%',
-    alignItems: 'center',
+    width: '85%',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: .5,
+    shadowRadius: .3,
+    elevation: 5,
+},
+
+  button2: {
+    backgroundColor: '#356A7D',
+    paddingVertical: 12,
+    paddingHorizontal: 17,
+    borderRadius: 25,
+    marginVertical: 10,
+    width: '85%',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: .5,
+    shadowRadius: .3,
+    elevation: 5,
   },
-  guestButton: {
-    backgroundColor: '#6b7280',
+  button3: {
+    backgroundColor: '#E9B25F',
+    paddingVertical: 12,
+    paddingHorizontal: 17,
+    borderRadius: 25,
+    marginVertical: 10,
+    width: '85%',
+    alignItems: 'flex-start',
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: .5,
+    shadowRadius: .3,
+    elevation: 5,
   },
   buttonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '600',
+    marginLeft: 20,
   },
 });
