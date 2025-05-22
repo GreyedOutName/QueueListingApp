@@ -46,31 +46,37 @@ export default function ScanScreen() {
             const queue_id = qr.data;
             const user_id = (await supabase.auth.getSession()).data.session?.user.id
             const joined_at = new Date().toISOString().split('.')[0].replace('T', ' ');
-
+            const QueueNum = (await supabase.rpc('get_max_int8_value',{target_queue_id:queue_id})).data
+          
             //check if user has already joined a queue (including the current scanned one)
-            const{data:existingQueue}= await supabase.from('waiting').select().eq('user_id',user_id)
-            if(existingQueue){
-              Alert.alert('You are already waiting in a queue!')
+            const{data:existingQueue}= await supabase.from('waiting').select('user_id').eq('user_id',user_id)
+            if(existingQueue?.toString() == '[]'){
+              console.log(existingQueue)
               setHasScanned(true)
+              
+              Alert.alert('You are already waiting in a queue!')
+              navigation.navigate('JoinQueue')
+              
               cooldownTimeout.current = setTimeout(() => {
                   setHasScanned(false);
               }, 3000);
-              navigation.navigate('ModeSelect')
-            }else{
-              //if user has no existing wait queue, proceed to add them to waiting table
+            }
+            else{//else if user has no existing wait queue, proceed to add them to waiting table
+              setHasScanned(true)
+
               const{error} = await supabase.from('waiting')
               .insert({
                   user_id:user_id,
                   queue_id:queue_id,
-                  queue_num:10,
+                  queue_num:QueueNum,
                   time_joined:joined_at,
               })
               if(error){
+                  console.log('QUEUE NUM :',QueueNum)
                   Alert.alert('Invalid QR Code')
               }else{
-                navigation.navigate('ModeSelect')
+                navigation.navigate('JoinQueue')
               }
-              setHasScanned(true)
               cooldownTimeout.current = setTimeout(() => {
                   setHasScanned(false);
               }, 3000);
