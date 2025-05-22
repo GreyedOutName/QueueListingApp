@@ -68,10 +68,7 @@ export default function ScanScreen() {
       style={styles.camera}
       facing={facing}
       
-      onBarcodeScanned={(result) => {
-        console.log("Scanned result:", result);
-        qrScanned(result);
-      }}
+      onBarcodeScanned={qrScanned}
       barcodeScannerSettings={{
         barcodeTypes: ['qr'],
       }}
