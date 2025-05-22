@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
   imageBanner: {
     width: 300,
     height: 155,
-    marginTop: -100,
+    marginTop: -120,
     marginBottom: 60,
     resizeMode: 'contain',
   },

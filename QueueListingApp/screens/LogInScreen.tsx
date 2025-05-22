@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, Image, Button, Alert, StyleSheet } from 'react-native';
+import { View, TextInput, Text, Image, Pressable, Alert, StyleSheet } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 import { RootStackParamList } from '../App';
@@ -45,7 +45,9 @@ export default function LogInScreen() {
         value={password}
         style={styles.input}
       />
-      <Button title="Log In" onPress={handleLogin} color='#4A4848'/>
+      <Pressable style={styles.button} onPress={handleLogin}>
+        <Text style={[styles.button, styles.login]}>Log in</Text>
+      </Pressable>
     </View>
   );
 }
@@ -87,5 +89,17 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 15,
     fontSize: 16,
+  },
+  button:{
+    backgroundColor: '#4A4848',
+    padding: 5,
+    borderRadius: 12,
+    marginTop: -1,
+  },
+  login:{
+    fontSize: 17,
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: '400',
   }
 });

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, Image, Alert, StyleSheet } from 'react-native';
+import { View, TextInput, Pressable, Text, Image, Alert, StyleSheet } from 'react-native';
 import { supabase } from '../lib/supabase';
 
 export default function SignInScreen() {
@@ -78,7 +78,9 @@ export default function SignInScreen() {
         style={styles.input}
         autoCapitalize="none"
       />
-      <Button title="Sign Up" onPress={handleSignUp} color='#4A4848' />
+      <Pressable style={styles.button} onPress={handleSignUp}>
+        <Text style={[styles.button, styles.login]}>Sign up</Text>
+      </Pressable>
     </View>
   );
 }
@@ -121,4 +123,16 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     fontSize: 16,
   },
+    button:{
+    backgroundColor: '#4A4848',
+    padding: 5,
+    borderRadius: 12,
+    marginTop: -1,
+  },
+  login:{
+    fontSize: 17,
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: '400',
+  }
 });
