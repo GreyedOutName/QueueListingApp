@@ -40,6 +40,10 @@ export default function ScanScreen() {
   }
 
   const qrScanned=async(qr:BarcodeScanningResult)=>{
+    setHasScanned(true)
+    cooldownTimeout.current = setTimeout(() => {
+                  setHasScanned(false);
+              }, 4000);
     if(!hasScanned){
         if (qr.data){
             console.log(qr.data)
@@ -52,18 +56,10 @@ export default function ScanScreen() {
             const{data:existingQueue}= await supabase.from('waiting').select('user_id').eq('user_id',user_id)
             if(existingQueue?.toString() == '[]'){
               console.log(existingQueue)
-              setHasScanned(true)
-              
               Alert.alert('You are already waiting in a queue!')
               navigation.navigate('JoinQueue')
-              
-              cooldownTimeout.current = setTimeout(() => {
-                  setHasScanned(false);
-              }, 3000);
             }
             else{//else if user has no existing wait queue, proceed to add them to waiting table
-              setHasScanned(true)
-
               const{error} = await supabase.from('waiting')
               .insert({
                   user_id:user_id,
@@ -77,9 +73,6 @@ export default function ScanScreen() {
               }else{
                 navigation.navigate('JoinQueue')
               }
-              cooldownTimeout.current = setTimeout(() => {
-                  setHasScanned(false);
-              }, 3000);
             }
         }
     }
