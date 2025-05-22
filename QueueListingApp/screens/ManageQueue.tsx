@@ -101,11 +101,20 @@ export default function ManageQueue() {
                     </TouchableOpacity>
                 </View>
             }
-            {!waitingList&&
-                <TouchableOpacity style={styles.button} onPress={()=>setShowQR(!showQR)}>
-                    <Text style={styles.buttonText}>{showQR?'Hide QR Code':'Get QR Code'}</Text>
+            {!waitingList && (
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => {
+                    if (QueueID) {
+                        navigation.navigate('GenerateQR', { queueId: QueueID });
+                    } else {
+                        Alert.alert('Queue ID not available');
+                    }
+                    }}
+                >
+                    <Text style={styles.buttonText}>Generate QR Code</Text>
                 </TouchableOpacity>
-            }
+                )}
             {!showQR&&
                 <TouchableOpacity style={styles.button} onPress={getTable}>
                     <Text style={styles.buttonText}>{waitingList?'Hide Waiting List':'Show Waiting List'}</Text>
