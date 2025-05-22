@@ -51,6 +51,10 @@ export default function ScanScreen() {
             const{data:existingQueue}= await supabase.from('waiting').select().eq('user_id',user_id)
             if(existingQueue){
               Alert.alert('You are already waiting in a queue!')
+              setHasScanned(true)
+              cooldownTimeout.current = setTimeout(() => {
+                  setHasScanned(false);
+              }, 3000);
               navigation.navigate('ModeSelect')
             }else{
               //if user has no existing wait queue, proceed to add them to waiting table
@@ -66,14 +70,11 @@ export default function ScanScreen() {
               }else{
                 navigation.navigate('ModeSelect')
               }
-
               setHasScanned(true)
               cooldownTimeout.current = setTimeout(() => {
                   setHasScanned(false);
               }, 3000);
             }
-
-            
         }
     }
   }
@@ -83,14 +84,11 @@ export default function ScanScreen() {
       <CameraView
       style={styles.camera}
       facing={facing}
-      
       onBarcodeScanned={qrScanned}
       barcodeScannerSettings={{
         barcodeTypes: ['qr'],
       }}
-
-
-        >
+      >
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
             <Text style={styles.text}>Flip Camera</Text>

@@ -27,6 +27,11 @@ export default function ModeSelect() {
         getUserInfo()
     },[])
 
+    const SignOut = () => {
+      supabase.auth.signOut()
+      navigation.navigate('Main')
+    }
+
     return (
         <View style={styles.container}>
             <Text>Welcome User {username}!</Text>
@@ -41,6 +46,10 @@ export default function ModeSelect() {
 
             <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('JoinQueue')}>
                 <Text style={styles.buttonText}>Join A Queue</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.button} onPress={SignOut}>
+                <Text style={styles.buttonText}>Sign Out</Text>
             </TouchableOpacity>
         </View>
     );

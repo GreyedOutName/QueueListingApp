@@ -14,6 +14,7 @@ import GenerateQRScreen from './screens/GenerateQRScreen';
 const Stack = createNativeStackNavigator();
 
 export type RootStackParamList = {
+  Main:undefined,
   SignIn: undefined;
   LogIn: undefined;
   ModeSelect: undefined;
