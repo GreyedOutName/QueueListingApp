@@ -64,13 +64,16 @@ export default function ScanScreen() {
 
   return (
     <View style={styles.container}>
-      <CameraView 
-        style={styles.camera} 
-        facing={facing} 
-        onBarcodeScanned={qrScanned}
-        barcodeScannerSettings={{
-            barcodeTypes: ["qr"],
-        }}
+      <CameraView
+      style={styles.camera}
+      facing={facing}
+      
+      onBarcodeScanned={qrScanned}
+      barcodeScannerSettings={{
+        barcodeTypes: ['qr'],
+      }}
+
+
         >
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
