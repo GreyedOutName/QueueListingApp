@@ -2,63 +2,106 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 
+type ModeSelectRouteProp = RouteProp<RootStackParamList, 'ModeSelect'>;
+
 export default function ModeSelect() {
-    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-    const [username,setUserName] = useState<string|null>('')
+  const route = useRoute<ModeSelectRouteProp>();
+  const guestUsername = route.params?.username;
 
-    const getUserInfo =async()=>{
-        const {data:getId} = await supabase.auth.getSession()
-        const user_id = getId.session?.user.id
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const [username, setUserName] = useState<string | null>('');
 
-        const {data:frompeople}= await supabase.from('people')
+  useEffect(() => {
+    const getUserInfo = async () => {
+      // Guest (no auth session)
+      if (guestUsername) {
+        setUserName(guestUsername);
+        return;
+      }
+
+      // Registered user
+      const { data: getId } = await supabase.auth.getSession();
+      const user_id = getId.session?.user.id;
+
+      if (!user_id) return;
+
+      const { data: frompeople } = await supabase
+        .from('people')
         .select('username')
-        .eq('user_id',user_id)
+        .eq('user_id', user_id);
 
-        if(frompeople){
-            setUserName(frompeople[0].username)
-        }
-        
-        //const {data:picturedownload} = await supabase.storage.from('profilepictures').download
-    }
+      if (frompeople && frompeople.length > 0) {
+        setUserName(frompeople[0].username);
+      }
+    };
 
-    useEffect(()=>{
-        getUserInfo()
-    },[])
-  
-    const SignOut = () => {
-      supabase.auth.signOut()
-      navigation.navigate('Main')
-    }
+    getUserInfo();
+  }, []);
 
-return (
+  const SignOut = () => {
+    supabase.auth.signOut();
+    navigation.navigate('Main');
+  };
+
+  return (
     <View style={styles.container}>
-        <Image source={require('../assets/icon.png')} style={styles.logo} />
-        <Text style={styles.title}>Good day, {username}!</Text>
+      <Image source={require('../assets/icon.png')} style={styles.logo} />
+      <Text style={styles.title}>Good day, {username}!</Text>
 
-        <Pressable style={styles.button1} onPress={() => navigation.navigate('CreateQueue')}>
-            <View style={styles.buttonContent}>
-                <Image source={require('../assets/create.png')} style={styles.image} />
-                <Text style={styles.buttonText}>Create Queue</Text>
-            </View>
-        </Pressable>
+      <Pressable
+        style={[styles.button1, guestUsername && styles.disabledButton]}
+        onPress={() => {
+          if (!guestUsername) {
+            navigation.navigate('CreateQueue');
+          }
+        }}
+        disabled={!!guestUsername}
+      >
+        <View style={styles.buttonContent}>
+          <Image source={require('../assets/create.png')} style={styles.image} />
+          <Text style={styles.buttonText}>
+            Create Queue {guestUsername ? '(Guests Restricted)' : ''}
+          </Text>
+        </View>
+      </Pressable>
 
-        <Pressable style={styles.button2} onPress={() => navigation.navigate('ManageQueue')}>
-            <View style={styles.buttonContent}>
-                <Image source={require('../assets/manage.png')} style={styles.image} />
-                <Text style={styles.buttonText}>Manage Queues</Text>
-            </View>
-        </Pressable>
+      <Pressable
+        style={[styles.button2, guestUsername && styles.disabledButton]}
+        onPress={() => {
+          if (!guestUsername) {
+            navigation.navigate('ManageQueue');
+          }
+        }}
+        disabled={!!guestUsername}
+      >
+        <View style={styles.buttonContent}>
+          <Image source={require('../assets/manage.png')} style={styles.image} />
+          <Text style={styles.buttonText}>
+            Manage Queues {guestUsername ? '(Guests Restricted)' : ''}
+          </Text>
+        </View>
+      </Pressable>
 
-        <Pressable style={styles.button3} onPress={() => navigation.navigate('JoinQueue')}>
-            <View style={styles.buttonContent}>
-                <Image source={require('../assets/join.png')} style={styles.image} />
-                <Text style={styles.buttonText}>Join a Queue</Text>
-            </View>
-        </Pressable>
+      <Pressable
+        style={styles.button3}
+        onPress={() => navigation.navigate('JoinQueue')}
+      >
+        <View style={styles.buttonContent}>
+          <Image source={require('../assets/join.png')} style={styles.image} />
+          <Text style={styles.buttonText}>Join a Queue</Text>
+        </View>
+      </Pressable>
+
+      {guestUsername && (
+        <Text style={styles.guestNotice}>
+          Guest users can only join queues.
+        </Text>
+      )}
     </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({
@@ -78,8 +121,8 @@ const styles = StyleSheet.create({
     marginBottom: 90,
   },
   buttonContent: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   image: {
     resizeMode: 'contain',
@@ -103,11 +146,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: .5,
-    shadowRadius: .3,
+    shadowOpacity: 0.5,
+    shadowRadius: 0.3,
     elevation: 5,
-},
-
+  },
   button2: {
     backgroundColor: '#356A7D',
     paddingVertical: 12,
@@ -119,8 +161,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: .5,
-    shadowRadius: .3,
+    shadowOpacity: 0.5,
+    shadowRadius: 0.3,
     elevation: 5,
   },
   button3: {
@@ -134,14 +176,27 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: .5,
-    shadowRadius: .3,
+    shadowOpacity: 0.5,
+    shadowRadius: 0.3,
     elevation: 5,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: '600',
-    marginLeft: 20,
+  color: '#fff',
+  fontSize: 18,
+  fontWeight: '600',
+  marginLeft: 20,
+  flexShrink: 1,
+  flexWrap: 'wrap',
+  maxWidth: '70%',
+},
+
+  disabledButton: {
+    opacity: 0.5,
+  },
+  guestNotice: {
+    color: 'gray',
+    fontStyle: 'italic',
+    marginTop: 10,
+    fontSize: 14,
   },
 });
