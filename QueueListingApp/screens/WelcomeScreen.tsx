@@ -16,8 +16,8 @@ export default function WelcomeScreen() {
   };
 
   const handleGuest = () => {
-    console.log('Continue as Guest Pressed');
-    // You can also navigate to a Home screen or set session
+    navigation.navigate('Guest');
+    
   };
 
   const IsUserLoggedIn = async() =>{
