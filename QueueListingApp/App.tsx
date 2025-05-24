@@ -10,6 +10,7 @@ import JoinQueue from './screens/JoinQueue';
 import ManageQueue from './screens/ManageQueue';
 import ScanScreen from './screens/ScanScreen';
 import GenerateQRScreen from './screens/GenerateQRScreen';
+import GuestScreen from './screens/GuestScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,12 +18,13 @@ export type RootStackParamList = {
   Main:undefined,
   SignIn: undefined;
   LogIn: undefined;
-  ModeSelect: undefined;
+  ModeSelect: { username?: string }; 
   CreateQueue:undefined;
   JoinQueue:undefined;
   ManageQueue:undefined;
   ScanScreen:undefined;
   GenerateQR: { queueId: string }; 
+  
 
 };
 
@@ -38,6 +40,7 @@ export default function App() {
         <Stack.Screen name="JoinQueue" component={JoinQueue} />
         <Stack.Screen name="ManageQueue" component={ManageQueue} />
         <Stack.Screen name="ScanScreen" component={ScanScreen} />
+        <Stack.Screen name="Guest" component={GuestScreen} />
         <Stack.Screen name="GenerateQR" component={GenerateQRScreen} />
       </Stack.Navigator>
     </NavigationContainer>
