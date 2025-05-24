@@ -20,16 +20,28 @@
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
+      "package": "com.greyedoutname.queuelit"
     },
     "web": {
       "favicon": "./assets/logo.png"
     },
-    "plugins": [[
-      "expo-audio",
-       {
+    "plugins": [
+      [
+        "expo-audio",
+        {
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
-        }]
-    ]
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c5986e1b-e286-4712-8951-2178a82b1bb6"
+      }
+    }
   }
 }
