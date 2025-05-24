@@ -95,16 +95,6 @@ export default function ModeSelect() {
         </View>
       </Pressable>
       
-      <Pressable
-        style={styles.button3}
-        onPress={() => navigation.navigate('PushNotifications')}
-      >
-        <View style={styles.buttonContent}>
-          <Image source={require('../assets/join.png')} style={styles.image} />
-          <Text style={styles.buttonText}>Push Notifications</Text>
-        </View>
-      </Pressable>
-
       {guestUsername && (
         <Text style={styles.guestNotice}>
           Guest users can only join queues.
