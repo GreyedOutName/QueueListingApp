@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    padding: 25,
     backgroundColor: '#fff',
   },
   smallercontainer: {
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderRadius: 8,
     marginVertical: 10,
-    width: '100%',
+    width: '85%',
     alignItems: 'center',
   },
   buttonText: {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Image, Alert, TouchableOpacity } from 'react-native';
 import { insertGuest } from '../lib/guestService';
 import { useNavigation } from '@react-navigation/native';
 
@@ -15,7 +15,7 @@ export default function GuestScreen() {
     try {
       const id = await insertGuest(username);
       if (id) {
-        navigation.navigate('ModeSelect', { username});
+        navigation.navigate('ModeSelect', {username});
       } else {
         Alert.alert("Error", "Could not proceed as guest.");
       }
@@ -27,7 +27,12 @@ export default function GuestScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Enter as Guest</Text>
+      <Image source={require('../assets/icon.png')} style={styles.icon} />
+
+      <Text style={styles.welcometext}>Log in temporarily.</Text>
+
+      <Text style={styles.text}>Don't need an account? Continue as guest.</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Enter your username"
@@ -35,9 +40,9 @@ export default function GuestScreen() {
         value={username}
         onChangeText={setUsername}
       />
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+      <Pressable style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Continue</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }
@@ -48,13 +53,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f5f9',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    padding: 50,
   },
-  title: {
-    fontSize: 26,
-    fontWeight: '700',
+    icon:{
+    height: 100,
+    width: 100,
+    marginTop: -200,
     marginBottom: 30,
-    color: '#1f2937',
+    alignSelf: 'center',
+    resizeMode: 'contain'
+  },
+    welcometext: {
+    fontSize: 30,
+    fontWeight: '800',
+    marginTop: 50,
+    paddingBottom: 10,
+    color: '#C83E3E',
+    textAlign: 'center',
+  },
+    text: {
+    fontSize: 22,
+    paddingBottom: 65,
+    fontWeight: '500',
+    fontFamily: 'Roboto',
+    textAlign: 'center',
+    width: '100%',
   },
   input: {
     width: '100%',
@@ -68,17 +91,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: '#000',
   },
-  button: {
-    backgroundColor: '#CF5050',
-    paddingVertical: 14,
-    paddingHorizontal: 30,
-    borderRadius: 10,
+    button:{
+    backgroundColor: '#4A4848',
+    padding: 5,
+    borderRadius: 12,
+    marginTop: -4,
     width: '100%',
-    alignItems: 'center',
+
   },
-  buttonText: {
+  buttonText:{
+    fontSize: 17,
     color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-  },
+    textAlign: 'center',
+    fontWeight: '400',
+    padding: 3,
+  }
 });
