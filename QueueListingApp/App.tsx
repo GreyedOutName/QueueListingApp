@@ -11,6 +11,7 @@ import ManageQueue from './screens/ManageQueue';
 import ScanScreen from './screens/ScanScreen';
 import GenerateQRScreen from './screens/GenerateQRScreen';
 import GuestScreen from './screens/GuestScreen';
+import PushNotifications from './screens/PushNotifications';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,8 +25,7 @@ export type RootStackParamList = {
   ManageQueue:undefined;
   ScanScreen:undefined;
   GenerateQR: { queueId: string }; 
-  
-
+  PushNotifications: undefined;
 };
 
 export default function App() {
@@ -42,6 +42,7 @@ export default function App() {
         <Stack.Screen name="ScanScreen" component={ScanScreen} />
         <Stack.Screen name="Guest" component={GuestScreen} />
         <Stack.Screen name="GenerateQR" component={GenerateQRScreen} />
+        <Stack.Screen name="PushNotifications" component={PushNotifications} />
       </Stack.Navigator>
     </NavigationContainer>
   );
