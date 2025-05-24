@@ -128,20 +128,23 @@ export default function JoinQueue() {
 
     return (
         <View style={styles.container}>
+            <Text style={styles.title}>Add your profile and join.</Text>
+
             {image? 
               <TouchableOpacity onLongPress={replaceImage}>
-                <Image source={{uri:image}} style={{ width: 250, height: 250, borderRadius: 75 }}/>
+                <Image source={{uri:image}} style={{ width: 250, height: 250, borderRadius: 150, marginTop: -150, marginBottom: 5}}/>
               </TouchableOpacity>
             :
               <TouchableOpacity style={styles.missingImage} onPress={callImagePicker}>
-                <Text>Add Your User Image</Text>
+                <Text>Click to add user image.</Text>
               </TouchableOpacity>
             }
             
-            <Text>Welcome User {username}!</Text>
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('ScanScreen')}>
-                <Text style={styles.buttonText}>Scan to Join!</Text>
-            </TouchableOpacity>
+            <Text>Username: {username}</Text>
+               
+            <Pressable style={styles.button} onPress={()=>navigation.navigate('ScanScreen')}>
+                <Text style={styles.buttonText}>Scan to Join Queue</Text>
+            </Pressable>
         </View>
     );
 }
@@ -157,28 +160,35 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 40,
+    marginBottom: 0,
+    textAlign: 'center',
+    marginTop: -230,
+    marginBottom: 200,
   },
   missingImage:{
     borderWidth: 2,
     borderColor: '#000',
     width:250,
     height:250,
-    borderRadius: 0,
+    borderRadius: 150,
     alignItems:'center',
-    justifyContent:'center'
+    justifyContent:'center',
+    marginTop: -150,
+    marginBottom: 5,
+
   },
   button: {
-    backgroundColor: '#3b82f6',
+    backgroundColor: '#CF5050',
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 8,
     marginVertical: 10,
     width: '80%',
     alignItems: 'center',
+    marginTop: 40,
   },
   guestButton: {
-    backgroundColor: '#6b7280',
+    backgroundColor: '#CF5050',
   },
   buttonText: {
     color: '#fff',
