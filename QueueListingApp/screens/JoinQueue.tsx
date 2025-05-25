@@ -160,10 +160,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 0,
     textAlign: 'center',
-    marginTop: -230,
-    marginBottom: 200,
+    marginTop: -150,
+    marginBottom: '200',
   },
   missingImage:{
     borderWidth: 2,
@@ -175,7 +174,6 @@ const styles = StyleSheet.create({
     justifyContent:'center',
     marginTop: -150,
     marginBottom: 5,
-
   },
   button: {
     backgroundColor: '#CF5050',
