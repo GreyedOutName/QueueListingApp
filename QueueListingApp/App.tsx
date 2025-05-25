@@ -43,16 +43,16 @@ export default function App() {
     <NotificationProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Main">
-          <Stack.Screen name="Main" component={WelcomeScreen} />
+          <Stack.Screen name="Main" component={WelcomeScreen} options={{headerShown:false}}/>
           <Stack.Screen name="SignIn" component={SignInScreen} />
           <Stack.Screen name="LogIn" component={LoginScreen} />
-          <Stack.Screen name="ModeSelect" component={ModeSelect} />
+          <Stack.Screen name="ModeSelect" component={ModeSelect} options={{headerShown:false}}/>
           <Stack.Screen name="CreateQueue" component={CreateQueue} />
           <Stack.Screen name="JoinQueue" component={JoinQueue} />
           <Stack.Screen name="ManageQueue" component={ManageQueue} />
-          <Stack.Screen name="ScanScreen" component={ScanScreen} />
+          <Stack.Screen name="ScanScreen" component={ScanScreen} options={{headerShown:false}}/>
           <Stack.Screen name="Guest" component={GuestScreen} />
-          <Stack.Screen name="GenerateQR" component={GenerateQRScreen} />
+          <Stack.Screen name="GenerateQR" component={GenerateQRScreen} options={{headerShown:false}}/>
         </Stack.Navigator>
       </NavigationContainer>
     </NotificationProvider>

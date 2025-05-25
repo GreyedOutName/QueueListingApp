@@ -11,11 +11,12 @@ export default function ManageQueue() {
     const [username,setUserName] = useState<string|null>('')
     const [queuename,setQueueName] = useState<string|null>('')
     const [QueueID,setQueueID] = useState<string|null>('')
+    const [showWaitingList,setShowWaitingList] = useState<boolean>(false);
     const [waitingList,setWaitingList] = useState<any[]|null>(null)
     const [showQR,setShowQR]=useState<boolean>(false);
     const [image,setImage] = useState <string|null> ();
     const [messageGiven,setMessage] = useState<string|null>();
-
+    
     const getInfo = async()=>{
         const user_id = (await supabase.auth.getSession()).data.session?.user.id
 
@@ -49,21 +50,24 @@ export default function ManageQueue() {
     }
 
     const getTable = async()=>{
-        if (waitingList){
-            setWaitingList(null)
-        }else{
-            const {data:fromwaiting} = await supabase.from('waiting')
-            .select()
-            .eq('queue_id',QueueID)
-            if (fromwaiting){
-                setWaitingList(fromwaiting)
-            } 
-        }
+        const {data:fromwaiting} = await supabase.from('waiting')
+        .select()
+        .eq('queue_id',QueueID)
+        if (fromwaiting){
+            setWaitingList(fromwaiting)
+        } 
     }
 
 
     const exportQR = async()=>{
-        Alert.alert('QR exported as PDF')
+        if (qrRef.current) {
+            qrRef.current.toDataURL((data: string) => {
+                const uri = `data:image/png;base64,${data}`;
+                Alert.alert('QR exported', uri.slice(0, 100) + '...');
+            });
+        } else {
+            Alert.alert('QR code not ready');
+        }
     }
 
     const moveQueue = async()=>{
@@ -79,13 +83,40 @@ export default function ManageQueue() {
     const giveMessage = async()=>{
         const joined_at = new Date().toISOString().split('.')[0].replace('T', ' ');
 
-        const {error} = await supabase.from('alerts').insert(
+        const {error:deleteError} = await supabase.from('alerts').delete().eq('queue_id',QueueID)
+        if(deleteError){
+            console.log(deleteError)
+        }
+
+        const {error} = await supabase.from('alerts').upsert(
             {
                 queue_id:QueueID,
                 text:messageGiven,
                 time_created:joined_at,
             }
         )
+        if(error){
+            console.log(error)
+        }
+    }
+
+    const deleteQueueFromDatabase = async()=>{
+        const {error} = await supabase.from('queues').delete().eq('queue_id',QueueID)
+        if(error){
+            console.log(error)
+        }
+        Alert.alert('Queue Deletion','Queue is now Deleted')
+    }
+
+    const deleteQueue = async()=>{
+        Alert.alert('Delete Queue', 'Are you sure you want to delete Queue?', [
+        {
+            text: 'Cancel',
+            onPress: () => Alert.alert('Deletion Canceled'),
+            style: 'cancel',
+        },
+        {text: 'OK', onPress: () => deleteQueueFromDatabase()},
+        ]);
     }
 
     useEffect(()=>{
@@ -94,12 +125,20 @@ export default function ManageQueue() {
 
     return (
         <View style={styles.container}>
-            {(image&&!showQR&&!waitingList)&&
+            <Text style={styles.pageTitle}>Manage your queue</Text>
+
+            {(!image && !showQR && !waitingList) && (
+                <View style={styles.placeholderBox}>
+                    <Text style={styles.queueLabel}>Queue Label:</Text>
+                </View>
+            )}
+
+            {(image&&!showQR&&!showWaitingList)&&
                 <Image source={{uri:image}} style={{ width: 250, height: 250, borderRadius: 75 }}/>
             }
-            <Text>Welcome User {username}!</Text>
-            <Text>Queue Name: {queuename}</Text>
-            {showQR&&
+            <Text style={styles.queueNameText}>Queue Name: {queuename}</Text>
+
+            {/*showQR&&
                 <View style={styles.smallercontainer}>
                     <QRCode size={250} value={QueueID!}/>
                     <TouchableOpacity style={styles.button} onPress={exportQR}>
@@ -109,10 +148,11 @@ export default function ManageQueue() {
                         <Text style={styles.buttonText}>Export as Image</Text>
                     </TouchableOpacity>
                 </View>
-            }
-            {!waitingList && (
+            */}
+
+            {!showWaitingList && (
                 <TouchableOpacity
-                    style={styles.button}
+                    style={styles.buttonRed}
                     onPress={() => {
                     if (QueueID) {
                         navigation.navigate('GenerateQR', { queueId: QueueID });
@@ -125,11 +165,11 @@ export default function ManageQueue() {
                 </TouchableOpacity>
                 )}
             {!showQR&&
-                <TouchableOpacity style={styles.button} onPress={getTable}>
-                    <Text style={styles.buttonText}>{waitingList?'Hide Waiting List':'Show Waiting List'}</Text>
+                <TouchableOpacity style={styles.buttonBlack} onPress={()=>{setShowWaitingList(!showWaitingList);getTable()}}>
+                    <Text style={styles.buttonText}>{showWaitingList?'Hide Waiting List':'Show Waiting List'}</Text>
                 </TouchableOpacity>
             }
-            {waitingList&&
+            {showWaitingList&&
                 <View>
                     <FlatList
                         style={styles.flatList}
@@ -137,7 +177,7 @@ export default function ManageQueue() {
                         renderItem={({ item }) => <WaitingListItem item={item} />}
                     />
                     <View>
-                        <TouchableOpacity style={styles.button} onPress={moveQueue}>
+                        <TouchableOpacity style={styles.buttonBlack} onPress={moveQueue}>
                             <Text style={styles.buttonText}>Move Queue</Text>
                         </TouchableOpacity>
                         <TextInput
@@ -145,8 +185,11 @@ export default function ManageQueue() {
                             onChangeText={setMessage}
                             style={styles.input}
                         />
-                        <TouchableOpacity style={styles.button} onPress={giveMessage}>
+                        <TouchableOpacity style={styles.buttonBlack} onPress={giveMessage}>
                             <Text style={styles.buttonText}>Give Message</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonRed} onPress={deleteQueue}>
+                            <Text style={styles.buttonText}>Delete Queue</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -156,63 +199,127 @@ export default function ManageQueue() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 25,
-    backgroundColor: '#fff',
-  },
-  smallercontainer: {
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 40,
-  },
-  button: {
-    backgroundColor: '#3b82f6',
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 8,
-    marginVertical: 10,
-    width: '85%',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  flatList: {
-    maxHeight: '40%',
-    borderWidth: 1,
-    borderColor: 'gray',
-  },
-  waitingList: {
-    flex:1,
-    flexDirection:'row',
-    alignItems:'flex-start',
-    padding:10,
-  },
-  queueNum: {
-    width:'10%'
-  },
-  queueUser: {
-    width:'60%'
-  },
-  queueTime: {
-    width:'30%'
-  },
-  input: {
-    color:'#000',
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 12,
-    borderRadius: 15,
-    fontSize: 16,
-  },
+    container: {
+        flex: 1,
+        paddingHorizontal: 10,
+        paddingTop: 70,
+        backgroundColor: '#f9f9f9',
+        alignItems: 'center',
+    },
+    pageTitle: {
+        fontSize: 26,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 20,
+        textAlign: 'center',
+    },
+    queueNameText: {
+        fontSize: 20,
+        fontWeight: '400',
+        color: '#333',
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    placeholderBox: {
+        width: 250,
+        height: 250,
+        borderRadius: 20,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        backgroundColor: '#eee',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    queueLabel: {
+        fontSize: 18,
+        color: '#333',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginVertical: 8,
+    },
+    imageBox: {
+        width: 250,
+        height: 250,
+        borderRadius: 20,
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#ccc',
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    buttonRed: {
+        backgroundColor: '#d9534f',
+        paddingVertical: 12,
+        paddingHorizontal: 30,
+        borderRadius: 12,
+        marginTop: 12,
+        width: '85%',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOpacity: 0.15,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 4,
+        elevation: 2,
+        alignSelf: 'center',
+    },
+    buttonBlack: {
+        backgroundColor: '#333',
+        paddingVertical: 12,
+        paddingHorizontal: 30,
+        borderRadius: 12,
+        marginTop: 12,
+        width: '85%',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOpacity: 0.15,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 4,
+        elevation: 2,
+        alignSelf: 'center',
+    },
+    flatList: {
+        maxHeight: '40%',
+        width: '100%',
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+        borderRadius: 10,
+        marginVertical: 10,
+        backgroundColor: '#fff',
+        alignSelf: 'center',
+    },
+    input: {
+        width: '100%',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        padding: 12,
+        fontSize: 16,
+        marginTop: 12,
+    },
+    controlsWrapper: {
+        marginTop: 30,
+        width: '100%',
+        alignSelf: 'center',
+    },
+    qrContainer: {
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        padding: 20,
+        borderRadius: 12,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 6,
+        elevation: 3,
+        marginBottom: 10,
+    },
+    qrButtonsContainer: {
+        width: '100%',
+        alignItems: 'center',
+    },
 });
