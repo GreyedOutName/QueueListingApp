@@ -13,38 +13,53 @@ export default function ModeSelect() {
 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [username, setUserName] = useState<string | null>('');
+  const [hasQueue, setHasQueue] = useState<boolean>(false);
 
   useEffect(() => {
-    const getUserInfo = async () => {
-      // Guest (no auth session)
+    const getUserInfoAndQueue = async () => {
       if (guestUsername) {
         setUserName(guestUsername);
         return;
       }
 
-      // Registered user
-      const { data: getId } = await supabase.auth.getSession();
-      const user_id = getId.session?.user.id;
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user_id = sessionData.session?.user.id;
 
       if (!user_id) return;
 
-      const { data: frompeople } = await supabase
+      // Get username
+      const { data: userData } = await supabase
         .from('people')
         .select('username')
         .eq('user_id', user_id);
 
-      if (frompeople && frompeople.length > 0) {
-        setUserName(frompeople[0].username);
+      if (userData && userData.length > 0) {
+        setUserName(userData[0].username);
+      }
+
+      // Check if user has queue
+      const { data: queueData, error } = await supabase
+        .from('queues')
+        .select('queue_id')
+        .eq('owner_id', user_id);
+
+      if (error) {
+        console.error('Error checking queues:', error);
+      } else {
+        setHasQueue(queueData && queueData.length > 0);
+        console.log('Queues found:', queueData);
       }
     };
 
-    getUserInfo();
+    getUserInfoAndQueue();
   }, []);
 
   const SignOut = () => {
     supabase.auth.signOut();
     navigation.navigate('Main');
   };
+
+  const isGuest = !!guestUsername;
 
   return (
     <View style={styles.container}>
@@ -58,35 +73,41 @@ export default function ModeSelect() {
       <Text style={styles.title}>Good day, {username}!</Text>
 
       <Pressable
-        style={[styles.button1, guestUsername && styles.disabledButton]}
+        style={[
+          styles.button1,
+          (isGuest || hasQueue) && styles.disabledButton,
+        ]}
         onPress={() => {
-          if (!guestUsername) {
+          if (!isGuest && !hasQueue) {
             navigation.navigate('CreateQueue');
           }
         }}
-        disabled={!!guestUsername}
+        disabled={isGuest || hasQueue}
       >
         <View style={styles.buttonContent}>
           <Image source={require('../assets/create.png')} style={styles.image} />
           <Text style={styles.buttonText}>
-            Create Queue {guestUsername ? '(Guests Restricted)' : ''}
+            Create Queue {isGuest ? '(Guests Restricted)' : hasQueue ? '(Queue already exists)' : ''}
           </Text>
         </View>
       </Pressable>
 
       <Pressable
-        style={[styles.button2, guestUsername && styles.disabledButton]}
+        style={[
+          styles.button2,
+          (isGuest || !hasQueue) && styles.disabledButton,
+        ]}
         onPress={() => {
-          if (!guestUsername) {
+          if (!isGuest && hasQueue) {
             navigation.navigate('ManageQueue');
           }
         }}
-        disabled={!!guestUsername}
+        disabled={isGuest || !hasQueue}
       >
         <View style={styles.buttonContent}>
           <Image source={require('../assets/manage.png')} style={styles.image} />
           <Text style={styles.buttonText}>
-            Manage Queues {guestUsername ? '(Guests Restricted)' : ''}
+            Manage Queue {isGuest ? '(Guests Restricted)' : !hasQueue ? '(No queue created)' : ''}
           </Text>
         </View>
       </Pressable>
@@ -97,13 +118,13 @@ export default function ModeSelect() {
           <Text style={styles.buttonText}>Join a Queue</Text>
         </View>
       </Pressable>
-      
-      {guestUsername && (
+
+      {isGuest && (
         <Text style={styles.guestNotice}>Guest users can only join queues.</Text>
       )}
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -207,4 +228,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
