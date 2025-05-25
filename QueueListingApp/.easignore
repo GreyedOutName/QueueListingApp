@@ -36,7 +36,3 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
-
-#firebase key
-queuelit-firebase-adminsdk-fbsvc-a78f4244c7.json
-google-services.json
