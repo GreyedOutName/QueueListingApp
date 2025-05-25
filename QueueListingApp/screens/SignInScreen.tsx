@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Pressable, Text, Image, Alert, StyleSheet } from 'react-native';
 import { supabase } from '../lib/supabase';
+import { registerForPushNotificationsAsync } from '../lib/registerForPushNotificiations';
 
 export default function SignInScreen() {
   const [email, setEmail] = useState('');
@@ -29,12 +30,14 @@ export default function SignInScreen() {
     }
 
     const user = signInData?.user;
+    const expoToken = await registerForPushNotificationsAsync()
 
     if (user) {
       const { error: insertError } = await supabase.from('people').insert([
         {
           user_id: user.id,
           username: username,
+          expo_push_token: expoToken,
         },
       ]);
 

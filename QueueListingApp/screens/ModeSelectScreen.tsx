@@ -97,7 +97,7 @@ export default function ModeSelect() {
           <Text style={styles.buttonText}>Join a Queue</Text>
         </View>
       </Pressable>
-
+      
       {guestUsername && (
         <Text style={styles.guestNotice}>Guest users can only join queues.</Text>
       )}

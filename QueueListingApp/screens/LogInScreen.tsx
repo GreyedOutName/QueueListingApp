@@ -3,6 +3,7 @@ import { View, TextInput, Text, Image, Pressable, Alert, StyleSheet } from 'reac
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 import { RootStackParamList } from '../App';
+import { registerForPushNotificationsAsync } from '../lib/registerForPushNotificiations';
 
 export default function LogInScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
@@ -18,7 +19,15 @@ export default function LogInScreen() {
     if (loginError) {
       Alert.alert('Login Failed', loginError.message);
     } else {
-      Alert.alert('Success', 'Logged in successfully!');
+      
+      const expo_token = await registerForPushNotificationsAsync()
+      const user_id = (await supabase.auth.getSession()).data.session?.user.id;
+      const {error} = await supabase.from('people')
+      .update({
+        expo_push_token:expo_token
+      })
+      .eq('user_id',user_id)
+      
       navigation.navigate('ModeSelect')
     }
 };
