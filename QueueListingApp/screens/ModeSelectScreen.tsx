@@ -112,7 +112,10 @@ export default function ModeSelect() {
         </View>
       </Pressable>
 
-      <Pressable style={styles.button3} onPress={() => navigation.navigate('JoinQueue')}>
+      <Pressable
+        style={styles.button3}
+        onPress={() => navigation.navigate('JoinQueue', { guestName: guestUsername })}
+      >
         <View style={styles.buttonContent}>
           <Image source={require('../assets/join.png')} style={styles.image} />
           <Text style={styles.buttonText}>Join a Queue</Text>
