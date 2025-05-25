@@ -5,8 +5,8 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useRoute, RouteProp, useNavigation ,NavigationProp} from '@react-navigation/native';
 import QRCode from 'react-native-qrcode-svg';
 import { RootStackParamList } from '../App';
-import FileSystem from 'expo-file-system'
-import MediaLibrary from 'expo-media-library'
+import * as FileSystem from 'expo-file-system'
+import * as MediaLibrary from 'expo-media-library'
 
 type QRScreenRouteProp = RouteProp<RootStackParamList, 'GenerateQR'>;
 

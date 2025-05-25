@@ -60,6 +60,7 @@ export default function ManageQueue() {
 
 
     const exportQR = async()=>{
+        /*
         if (qrRef.current) {
             qrRef.current.toDataURL((data: string) => {
                 const uri = `data:image/png;base64,${data}`;
@@ -67,7 +68,7 @@ export default function ManageQueue() {
             });
         } else {
             Alert.alert('QR code not ready');
-        }
+        }*/
     }
 
     const moveQueue = async()=>{
@@ -105,6 +106,7 @@ export default function ManageQueue() {
         if(error){
             console.log(error)
         }
+        navigation.navigate('ModeSelect')
         Alert.alert('Queue Deletion','Queue is now Deleted')
     }
 
