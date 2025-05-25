@@ -134,23 +134,25 @@ export default function CreateQueue() {
                         borderRadius: 10,
                         alignItems: 'center',
                         }}>
-                        <TouchableOpacity style={styles.button} onPress={() => callImagePicker('gallery')}>
-                            <Text>Pick From Gallery</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={() => callImagePicker('camera')}>
-                            <Text>Take Picture</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ backgroundColor: 'red', marginTop: 10, width: '40%', padding: 12, borderRadius: 8, marginVertical: 5, alignItems: 'center'}} onPress={() => setModal(false)}>
-                            <Text style={{ color: 'white' }}>Close</Text>
-                        </TouchableOpacity>
+                        <Pressable style={styles.button1} onPress={() => callImagePicker('gallery')}>
+                            <Text style={{color: 'white', fontWeight: '400'}}>Pick From Gallery</Text>
+                        </Pressable>
+                        <Pressable style={styles.button1} onPress={() => callImagePicker('camera')}>
+                            <Text style={{color: 'white', fontWeight: '400'}}>Take Picture</Text>
+                        </Pressable>
+                        <Pressable style={styles.button} onPress={() => setModal(false)}>
+                            <Text style={{ color: 'white'}}>Close</Text>
+                        </Pressable>
                     </View>
                 </View>
             </Modal>
+
+            <Text style={styles.title}>Create a New Queue</Text>
+
             {image&&
-                <Image source={{uri:image}} style={{ height: 200, width: 200,}}/>
+                <Image source={{uri:image}} style={{ height: 230, width: 230, alignSelf:'center', marginBottom: 30}}/>
             }
-            <Text>Welcome User {username}!</Text>
-            <Text>Queue Name:</Text>
+            <Text>Queue Label:</Text>
             <TextInput
                     placeholder="eg. `Line for SuperStore`"
                     onChangeText={setQueueName}
@@ -158,14 +160,14 @@ export default function CreateQueue() {
                     style={styles.input}
             />
             <Text>Add Queue Image:</Text>
-            <TouchableOpacity style={styles.button} onPress={()=>setModal(true)}>
+            <Pressable style={[styles.button1]} onPress={()=>setModal(true)}>
                 <Text style={styles.buttonText}>Add Image</Text>
-            </TouchableOpacity>
+            </Pressable>
            
 
-            <TouchableOpacity style={styles.button} onPress={createNewQueue}>
+            <Pressable style={styles.button2} onPress={createNewQueue}>
                 <Text style={styles.buttonText}>Create Queue</Text>
-            </TouchableOpacity>
+            </Pressable>
         </View>
     );
 }
@@ -174,21 +176,42 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: 25,
     backgroundColor: '#fff',
   },
   title: {
     fontSize: 26,
     fontWeight: 'bold',
     marginBottom: 40,
+    textAlign: 'center',
+    marginTop: -150,
   },
-  button: {
-    backgroundColor: '#3b82f6',
+  button1: {
+    backgroundColor: '#CF5050',
     paddingVertical: 12,
     paddingHorizontal: 30,
     borderRadius: 8,
     marginVertical: 10,
-    width: '80%',
+    width: '100%',
+    color: '#fff',
+    alignItems: 'center',
+  },
+  button2: {
+    backgroundColor: '#4A4848',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 8,
+    marginVertical: 10,
+    width: '100%',
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: '#4A4848',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 7,
+    width: '30%',
+    alignItems: 'center',
   },
   guestButton: {
     backgroundColor: '#6b7280',
@@ -197,6 +220,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+    textAlign: 'center',
   },
   input: {
     marginBottom: 12,
@@ -205,5 +229,11 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 6,
     fontSize: 16,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 20,
   },
 });
