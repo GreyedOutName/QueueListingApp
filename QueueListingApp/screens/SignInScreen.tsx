@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   icon:{
     height: 100,
     width: 100,
-    marginTop: -100,
+    marginTop: -200,
     marginBottom: 30,
     alignSelf: 'center',
     resizeMode: 'contain'

@@ -48,7 +48,13 @@ export default function ModeSelect() {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/icon.png')} style={styles.logo} />
+      <View style={[styles.headerContainer]}>
+        <Image source={require('../assets/icon.png')} style={styles.logo} />
+        <Pressable onPress={SignOut}>
+          <Image source={require('../assets/exit.png')} style={styles.exit} />
+        </Pressable>
+      </View>
+
       <Text style={styles.title}>Good day, {username}!</Text>
 
       <Pressable
@@ -85,10 +91,7 @@ export default function ModeSelect() {
         </View>
       </Pressable>
 
-      <Pressable
-        style={styles.button3}
-        onPress={() => navigation.navigate('JoinQueue')}
-      >
+      <Pressable style={styles.button3} onPress={() => navigation.navigate('JoinQueue')}>
         <View style={styles.buttonContent}>
           <Image source={require('../assets/join.png')} style={styles.image} />
           <Text style={styles.buttonText}>Join a Queue</Text>
@@ -96,13 +99,11 @@ export default function ModeSelect() {
       </Pressable>
       
       {guestUsername && (
-        <Text style={styles.guestNotice}>
-          Guest users can only join queues.
-        </Text>
+        <Text style={styles.guestNotice}>Guest users can only join queues.</Text>
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -112,13 +113,24 @@ const styles = StyleSheet.create({
     padding: 25,
     backgroundColor: '#fff',
   },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '109%',
+    paddingHorizontal: 20,
+    marginBottom: 80,
+    marginTop: -80,
+  },
   logo: {
-    marginTop: -70,
-    alignSelf: 'flex-start',
     resizeMode: 'contain',
     width: 60,
     height: 60,
-    marginBottom: 90,
+  },
+  exit: {
+    resizeMode: 'contain',
+    width: 60,
+    height: 60,
   },
   buttonContent: {
     flexDirection: 'row',
@@ -130,7 +142,6 @@ const styles = StyleSheet.create({
     height: 130,
   },
   title: {
-    marginTop: -25,
     fontSize: 25,
     fontWeight: 'bold',
     marginBottom: 25,
@@ -140,7 +151,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 17,
     borderRadius: 25,
-    marginVertical: 10,
     width: '85%',
     alignItems: 'flex-start',
     marginBottom: 20,
@@ -155,7 +165,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 17,
     borderRadius: 25,
-    marginVertical: 10,
     width: '85%',
     alignItems: 'flex-start',
     marginBottom: 20,
@@ -170,7 +179,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 17,
     borderRadius: 25,
-    marginVertical: 10,
     width: '85%',
     alignItems: 'flex-start',
     marginBottom: 20,
@@ -181,15 +189,14 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-  color: '#fff',
-  fontSize: 18,
-  fontWeight: '600',
-  marginLeft: 20,
-  flexShrink: 1,
-  flexWrap: 'wrap',
-  maxWidth: '70%',
-},
-
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
+    marginLeft: 20,
+    flexShrink: 1,
+    flexWrap: 'wrap',
+    maxWidth: '70%',
+  },
   disabledButton: {
     opacity: 0.5,
   },
@@ -200,3 +207,4 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
