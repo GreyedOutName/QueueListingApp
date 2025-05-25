@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, FlatList, Image} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, FlatList, Image, TextInput} from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { supabase } from '../lib/supabase';
 import { RootStackParamList } from '../App';
@@ -14,6 +14,7 @@ export default function ManageQueue() {
     const [waitingList,setWaitingList] = useState<any[]|null>(null)
     const [showQR,setShowQR]=useState<boolean>(false);
     const [image,setImage] = useState <string|null> ();
+    const [messageGiven,setMessage] = useState<string|null>();
 
     const getInfo = async()=>{
         const user_id = (await supabase.auth.getSession()).data.session?.user.id
@@ -76,7 +77,15 @@ export default function ManageQueue() {
     }
 
     const giveMessage = async()=>{
-        Alert.alert('Notifications Given')
+        const joined_at = new Date().toISOString().split('.')[0].replace('T', ' ');
+
+        const {error} = await supabase.from('alerts').insert(
+            {
+                queue_id:QueueID,
+                text:messageGiven,
+                time_created:joined_at,
+            }
+        )
     }
 
     useEffect(()=>{
@@ -131,6 +140,11 @@ export default function ManageQueue() {
                         <TouchableOpacity style={styles.button} onPress={moveQueue}>
                             <Text style={styles.buttonText}>Move Queue</Text>
                         </TouchableOpacity>
+                        <TextInput
+                            placeholder='Message Text'
+                            onChangeText={setMessage}
+                            style={styles.input}
+                        />
                         <TouchableOpacity style={styles.button} onPress={giveMessage}>
                             <Text style={styles.buttonText}>Give Message</Text>
                         </TouchableOpacity>
@@ -173,7 +187,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   flatList: {
-    maxHeight: '70%',
+    maxHeight: '40%',
     borderWidth: 1,
     borderColor: 'gray',
   },
@@ -191,5 +205,14 @@ const styles = StyleSheet.create({
   },
   queueTime: {
     width:'30%'
-  }
+  },
+  input: {
+    color:'#000',
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    padding: 12,
+    borderRadius: 15,
+    fontSize: 16,
+  },
 });
